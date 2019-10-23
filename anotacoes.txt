@@ -1,0 +1,60 @@
+em um pacote para matchers...
+
+matchers proprios devem ser feitos em classes separadas, importando TypeSafeMatcher do Hamcrest , passando como <generic> o tipo de dado que será recebido pela classe
+public class DiaSemanaMatcher extends TypeSafeMatcher<Date> {...}
+
+depois, junte os métodos numa classe onde se chamará os matcher criados a partir do nome que for definido. o método deve ser static
+public static DiaSemanaMatcher caiem(Integer diaSemana) {
+	return new DiaSemanaMatcher(diaSemana);
+}
+
+em casos de erro, é possível formatar a descrição
+no método describeTo
+
+SUÍTE DE TESTES
+
+serve para executar todos os testes em apenas uma bateria 
+
+ficam em pacotes separados 
+a classe deverá possuir a anotação a seguir e depois, a declaração das classes que pertencerão à suite de testes 
+
+@RunWith(Suite.class)
+@SuiteClasses({
+	Classe1Teste.class,
+	Classe2Teste.class,
+	Classe3Teste.class
+})
+
+a classe em si não é importante
+aqui pode ser necessário o uso do @BeforeClass e @AfterClass para definir alguma confiuração inicial, principalmente quando se tratar de testes que envolvam banco 
+
+desvantagem: 
+classes novas deverão ser adicionadas a suite conforme o andamento do projeto
+as execuções ficarão duplicadas, exemplo de execução: teste1, teste2, teste3, SUITE[teste1, teste2, teste3], ...
+
+CRIAÇÃO DE DADOS P/ TESTE
+
+servem para facilitar a declaração de objetos necessários ao teste
+
+pacote para builders 
+ObjetoBuilder
+
+na classe, deve-se definir:
+- um contrutor privado
+- atributo p/ referneciar a classe
+- método public static que irá gerar o objeto segundo as caracteristicas desejadas, será static p/ poder ser chamado sem instância. retorna um objeto da propria classe
+exemplo: objetoDaClasse.atributoQueReferenciaClasse = new ClasseReferenciada("construa"); retorne;
+- método que irá retornar o objeto gerado (build)
+
+a classe pode conter:
+- chain methods, que irão complementar alguma atributo do objeto, para se encaixar em um cenário específico. retornam this.
+*quando o cenário em que é necessário utilizar chain methods várias vezes, recomenda-se a criação de outro método static, para defirnir o objeto com caracteristicas distintas
+
+BUILDER MASTER 
+
+automatiza a criação dos builders 
+adicione a lib e dê build path
+
+faça um método main chamando o builder master passando como parâmetro a classe que se deseja gerar o builder
+execute como java app e o código será gerado no console
+crie a classe, cole o código e se quiser, defina os valores padrões às variáveis
