@@ -78,3 +78,18 @@ a métrica de cobertura é de no mínimo 75%
 maior utilidade: verificar as linhas vermelhas
 
 deve-se preocupar em atingir 100% de aceitação
+
+DEPENDÊNCIAS EXTERNAS 
+
+testes unitários não acessam dependências externas (banco, arquivos, rede, etc)
+caso possuam, isso impactará nos princípios fundamentais dos testes unitários:
+
+FAST -> acesso a dependências externas toma mais tempo e vai contra este princípio 
+INDEPENDENT -> os testes não ficarão mais isolados 
+REPEATABLE -> é difícil garantir que dependências externas fiquem sempre no mesmo estado, contribuindo assim para a quebra dos testes
+SELF-VERIFYING -> perderá auto-rastreabilidade 
+TIMELY -> conexões com o ambiente externo podem não ser estáveis 100% do tempo, ou os serviços necessários podem estar fora do ar. o teste pode ficar indisponível ou quebrar
+
+suites de testes que utilizam dependências externas possuem notória diferença no tempo de execução e falhas
+quando é necessário acessar serviços externos, utilizamos mocks
+
