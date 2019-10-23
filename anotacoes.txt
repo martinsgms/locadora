@@ -406,9 +406,27 @@ string: string vazia
 numeros: zero
 objeto: null
 
+objetos mock devem possuir variáveis globais, 
+ClasseDoObjeto objetoMock;
+
+e serem inicializados com
+objetoMock = mock(ClasseDoObjeto.class)
+
 ====================================================  GERANDO EXPECTATIVAS ==================================================== 
 
 devemos "ensinar" os objetos mock como se comportar/reagir a cada chamada para simular o exato comportamento da classe real 
 garante que quando o serviço real estiver pronto, a funcionalidade em si também funcionará corretamente 
 
-impartante: quando o mock não possuir alguma expectativa declarada, ele irá retornar o seu valor padrão
+when -> define o que o mock deve retornar quando o método for chamado
+when(objetoMock.metodo()).thenReturn(objetoQueDeveRetornar)
+
+importante: quando o método mockado não possuir alguma expectativa declarada, ele irá retornar o seu valor padrão
+
+====================================================  VERIFICANDO COMPORTAMENTOS 1 ==================================================== 
+
+mocks permitem a:
+- definição dinâmica de comportamentos 
+- verificação da interação com os objetos 
+
+verify -> verifica se um método foi chamado de acordo com os parâmetros passados 
+verify(objetoMock).metodo(parametrosDoMetodo)

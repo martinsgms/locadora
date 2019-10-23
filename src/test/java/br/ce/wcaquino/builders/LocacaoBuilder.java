@@ -16,7 +16,7 @@ public class LocacaoBuilder {
     private Locacao elemento;
     private LocacaoBuilder(){}
 
-    public static LocacaoBuilder umLocacao() {
+    public static LocacaoBuilder umaLocacao() {
         LocacaoBuilder builder = new LocacaoBuilder();
         inicializarDadosPadroes(builder);
         return builder;
@@ -49,18 +49,23 @@ public class LocacaoBuilder {
         return this;
     }
 
-    public LocacaoBuilder comDataRetorno(Date param) {
-        elemento.setDataRetorno(param);
-        return this;
-    }
+//    public LocacaoBuilder comDataRetorno(Date param) {
+//        elemento.setDataRetorno(param);
+//        return this;
+//    }
 
     public LocacaoBuilder comValor(Double param) {
         elemento.setValor(param);
+        return this;
+    }
+    public LocacaoBuilder atrasada() {
+        elemento.setDataRetorno(DataUtils.obterDataComDiferencaDias(-2));
         return this;
     }
 
     public Locacao build() {
         return elemento;
     }
+
 }
 

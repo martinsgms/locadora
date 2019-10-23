@@ -13,6 +13,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -27,8 +28,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
 
+import br.ce.wcaquino.builders.LocacaoBuilder;
 import br.ce.wcaquino.dao.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -49,17 +50,20 @@ public class LocacaoServiceTest {
 	
 	private LocacaoService service;
 	private Usuario usuario;
+	private EmailService emailService;
 	
 	@Before
 	public void setup(){
 	    dao = mock(LocacaoDAO.class);
 	    spcService = mock(SPCService.class);
+	    emailService = mock(EmailService.class);
 	    
 		service = new LocacaoService();
 		usuario = umUsuario().build();
 		
 		service.setSpcService(spcService);
 		service.setLocacaoDAO(dao);
+		service.setEmailService(emailService);
 	}
 	
 	@Test
@@ -138,6 +142,16 @@ public class LocacaoServiceTest {
 	    service.alugarFilme(usuario, filmes);
     }
 	
+	@Test
+	public void deveEnviarEmailParaLocacoesAtrasadas() {
+	    List<Locacao> locacoes = Arrays.asList(LocacaoBuilder.umaLocacao().atrasada().build());
+	    
+	    when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
+	    
+	    service.notificarAtrasos();
+	    
+	    verify(emailService).notificarAtraso(usuario);
+    }
 	
 //	public static void main(String[] args) {
 //        new BuilderMaster().gerarCodigoClasse(Locacao.class);
