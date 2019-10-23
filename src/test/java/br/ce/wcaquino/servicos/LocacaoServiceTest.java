@@ -12,6 +12,7 @@ import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -25,14 +26,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
+import br.ce.wcaquino.dao.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
 import br.ce.wcaquino.utils.DataUtils;
-import buildermaster.BuilderMaster;
 
 public class LocacaoServiceTest {
 
@@ -48,6 +50,8 @@ public class LocacaoServiceTest {
 	public void setup(){
 		service = new LocacaoService();
 		usuario = umUsuario().build();
+		LocacaoDAO dao = mock(LocacaoDAO.class);
+		service.setLocacaoDAO(dao);
 	}
 	
 	@Test
@@ -114,7 +118,7 @@ public class LocacaoServiceTest {
 		assertThat(retorno.getDataRetorno(), caiNumaSegunda());
 	}
 	
-	public static void main(String[] args) {
-        new BuilderMaster().gerarCodigoClasse(Locacao.class);
-    }
+//	public static void main(String[] args) {
+//        new BuilderMaster().gerarCodigoClasse(Locacao.class);
+//    }
 }
