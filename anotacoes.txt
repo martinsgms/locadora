@@ -93,3 +93,34 @@ TIMELY -> conexões com o ambiente externo podem não ser estáveis 100% do tempo, 
 suites de testes que utilizam dependências externas possuem notória diferença no tempo de execução e falhas
 quando é necessário acessar serviços externos, utilizamos mocks
 
+a partir de agora trabalharemos com persistência de dados e DAO para a locação
+testes que trabalham com persistência de dados são testes de integração
+
+OBJETOS FALSOS
+
+com o dao, os testes quebrarão
+para voltar a funcionar, deveriam instanciar o DAO 
+
+problema: 
+- o DAO não está completo
+- os testes deixarão de ser isolados 
+
+solução 1: fake object
+criar uma classe DAO fake para injetar nos testes para que voltem a funcionar
+eficaz para isolar o teste do ambiente externo 
+desvantagem -> todo DAO irá precisar de uma classe fake
+
+MOCK
+
+em vez de gerar objetos fake, gera objetos mock 
+com esses objetos, será possível definir comportamentos dinâmicos 
+
+"um mock é uma instância de um objeto que para todos os efeitos, responde como se estivesse implementando a classe que ele utilizou como origem"
+é genérico, então ele não sabe como se comportar
+possui comportamento padrâo de acordo com a assinatura do método 
+
+[tipo/retorno ou comportamento padrão]
+void: sem ação 
+string: string vazia
+numeros: zero
+objeto: null
