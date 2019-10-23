@@ -59,4 +59,22 @@ faça um método main chamando o builder master passando como parâmetro a classe q
 execute como java app e o código será gerado no console
 crie a classe, cole o código e se quiser, defina os valores padrões às variáveis
 
-asas
+ANÁLISE DE COBERTURA
+
+métricas dos testes unitários: 
+- percentual de aceitação dos testes 
+- percentual de cobertura de código 
+
+percentual de aceitação dos testes = testes executados com sucesso / testes executados 
+barra verde = 100% de aceitação 
+
+cobertura com EclEmma 
+verde = linha executada completamente 
+amarela = linha executada parcialmente (a linha pode conter lógica que cause desvio/branches)
+vermelho = a linha não foi executada
+
+100% de cobertura não garante um teste 100% seguro, pode ser que mais cenários para ser testados estejam valtando 
+a métrica de cobertura é de no mínimo 75% 
+maior utilidade: verificar as linhas vermelhas
+
+deve-se preocupar em atingir 100% de aceitação
