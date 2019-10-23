@@ -1,3 +1,284 @@
+====================================================  INTRODUÇÃO AOS TESTES UNITÁRIOS ==================================================== 
+
+EFEITO BORBOLETA: o bater das asas de uma borboleta pode causar um tornado do outro lado do planeta  
+assim como no desenvolvimento de software
+uma simples alteração em uma linha de código pode impactar em diversas funcionalidades que você nem sabia que estavam relacionadas 
+
+como garantir que uma funcionalidade não parou de funcionar com o desenvolvimento de outra?
+o seguinte fluxo pode ser aplicado:
+dev(f1) -> test(f1) -> 
+dev(f2) -> test(f2, f1) -> 
+dev(f3) -> test(f3, f2, f1) ->
+ ... -> 
+dev(fn) -> test(fn, ... , f3, f2, f1)
+
+perceba que, para cada funcionalidade dsenvolvida, ela mesma e todas as anteriores devem ser testadas para assegurar seu correto funcionamento
+veja também que a medida que o desenvolvimento avança, os testes aumentam, e se forem feitos manualmente, demandarão uma grande parcela de tempo do projeto, tornando-se uma tarefa inviável
+
+por isso adota-se o uso dos testes automatizados, e a maneira mais barata de se aplicar isso são os testes unitários
+os testes unitários avaliam uma das menores porções de código de um sistema: os métodos
+e cada método pode ter n-testes para testar cenários distintos, isto é, com entradas distintas, para verificar como e se o método se comporta como esperado 
+exemplos: entradas de dados nula, inválida, correta, etc
+
+cada teste deve ser isolado de forma a seguir a regra de negócio de cada projeto
+na maioria das vezes, divide-se em tres etapas: 
+
+ENTRADA + AÇÃO = RESULTADO
+
+uma mesma ação executada em cenários (entradas) distintas pode gerar diferentes resultados
+
+cenário: todas as configurações necessárias para que o cenário que desejamos testar esteja disponível
+ambiente + entradas necessárias
+
+ação: onde o método a ser testado será executado; realizar a ação sob as condições definidas pelo cenário 
+
+resultado: da ação coleta-se o resultado, que poderá ser qualquer coisa (objeto, msg, alerta, exceção, etc). é nessa fase que se compara o resultado obtido com o esperado para aquela ação sob as condições configuradas na fase inicial 
+
+====================================================  PRINCIPIO FIRST ====================================================  
+
+parâmetros que caracterizam um teste unitário
+
+Fast:
+o teste unitário deve ser executado muito rápido (tempo de execução)
+
+Independent:
+um teste deve ser isolado; não deve depender de nenhum outro para funcionar, inclusive, rodar em qualquer ordem
+
+Repeatable:
+um teste deve ser executado a qualquer momento quantas vezes for necessário 
+
+Self-Verifying
+um teste deve saber quando sua execução foi correta ou não 
+
+Timely
+o teste deve ser criado no momento correto
+
+outra caracteristica é a padronização dos resultados do teste e o rastreamento de possíveis erros nos testes
+e para isso, utiliza-se ferramentas específicas
+
+====================================================  JUNIT ====================================================  
+
+controle de execução e padronização dos resultados 
+recursos padrão do framework XUnit 
+
+TestRunner: é quem executa os testes e gera os resultados
+TestFixture: pré-condições necessárias aos testes 
+TestSuites: onde se pode elencar os testes que deverão ser executados 
+TestResultFormatter: quem padroniza os resultados dos testes 
+Assertions: verificam o comportamento ou estado daquilo que é testado (expressão lógica)
+
+importando o JUnit via pom.xml
+...
+<dependency>
+	<groupId>junit</groupId>
+	<artifactId>junit</artifactId>
+	<version>4.12</version>
+</dependency>
+...
+ao salvar o arquivo, o maven deve baixar a dependência (junit + hamcrest)
+
+declarando um método de teste:
+
+	@Test
+	public void testMetodo(){
+		//code...
+	}	
+
+a verificação de falha ou sucesso do JUnit (barra vermelha/verde) é baseada nas assertivas 
+SEMPRE que um teste falhar, corrija o problema para que ele volte a funcionar 
+
+metáfora da janela de vidro: produzida em 82 na área de criminologia americana para tentar explicar uma caracteriscica comportamental humana
+considere um edificio com algumas janelas quebradas
+se as janelas não forem reparadas a tendência é que vândalos quebrem mais janelas 
+
+nos testes unitários, uma vez que um teste falha e não é corrigido a tendência é que no futuro mais testes falhem e também não sejam corrigidos
+
+====================================================  ORGANIZAÇÃO DOS ARQUIVOS DE TESTE ====================================================
+
+para facilitar a rastreabilidade das classes de testes, cria-se uma classe de teste para corresponder a classe do sistema 
+classes d teste não entram em pacotes de produção, portanto, deve-se reservar um pacote para os testes
+
+> src/main/java
+	br.com.meusistema.classes
+		MinhaClasse.java
+> src/test/java
+	br.com.meusistema.classes
+		MinhaClasseTest.java
+
+em tempo de execução, o java entenderá que as duas classes estão no mesmo pacote
+fisicamente separadas
+lógicamente juntas 
+
+obedecendo a regra da mesma estrutura de pacotes, pode-se ter acesso a variáveis public, protected, default
+senão, somente o default será acessível
+
+====================================================  ASSERT ====================================================  
+
+assertEquals(valor_esperado, variavel)
+p/ casas decimais deve-se adicionar um terceiro parâmetro p/ especificar margem de erro (tolerância de casas)
+
+tipos primitivos possuem forma de representação em forma de objeto -> classes Wrappers
+comparações envolvendo estes tipos de variáveis, deve-se iguala-las 
+ou se passa de objeto a primitivo, ou vice-versa 
+
+primitivo -> objeto: Integer.valueof(var)
+objeto -> primitivo: var.intValue();
+
+comparações entre strings onde não se quer levar em conta caixa alta/baixa
+assertTrue("str".equalsIgnoreCase("STR"))
+
+testar prefixo da string
+assertTrue("str".startsWith("s"))
+
+quem deve dizer se um objeto é igual a outro é o proprio objeto
+então, a classe deve possuir um método equals, senao o java irá utilizar o equals da superclasse object e comparar se o objeto é o mesmo que o outro (mesma instancia)
+
+assertSame(i1, i2) verifica se são dois objetos da mesma instancia 
+
+====================================================  ASSERTTHAT ====================================================  
+
+método assertivo genérico
+
+assertThat(atual, esperado)
+o valor esperado é representado por matchers (hamcrest)
+
+assertThat(5, is(equalTo(5)))
+
+====================================================  DIVISÃO DO TESTE ====================================================  
+
+FIRST: I-> também representa Isolado
+cada teste deve testar uma funcionalidade isoladamente, sem depender de nenhum outro método 
+
+para cada assertiva, recomenda-se um método 
+ganha-se em rastreabilidade
+pois a execução dos testes é interrompida imediatamente no local da falha
+
+pode-se alterar este comportamento do junit com a 
+@Rule 
+ErrorCollector ...(instanciar)
+
+objeto.checkThat(atual, esperado)
+deste modo, mesmo que uma assertiva venha a falhar, a execução das demais não será interrompida 
+tendo assim, o feedback de todas 
+
+====================================================  EXCEPTIONS ====================================================  
+
+falha -> teste executado sem problemas porém, alguma condição esperada não foi atendida
+
+erro-> algum problema durante a execução do teste impede que este seja concluído (exceções não tratadas)
+
+como tratar um teste que verifica o lançamento de uma exceção?
+Existem 3 maneiras:
+
+1- (elegante) adicionar a notação sobre o teste:
+@Test(expected=Exception.class)
+
+método muito superficial, pois não é capaz de verificar a mensagem de exception, exceto se no projeto, tenha-se certeza que uma exception só será lançada pelo motivo testado. caso a classe de Exception seja mais genérica, esta opção não é recomendada
+
+**garantia que a exceção está vindo apenas por um motivo, logo, uma classe Exception dedicada a um motivo apenas 
+
+2- (robusta) criar estrutura try/catch
+uso indicado quando o projeto tem uma classe para agrupar suas exceções. Será possível verificar qual exceção foi lançada através de sua mensagem 
+
+try{
+	//code; 
+	fail("exceção esperada") //evitar um false positivo;
+}catch(Exception e){
+	//é possível fazer verificações na exceção aqui! vantagem.
+	assertThat(e.getMessage, is("msg a ser verificada"));
+}
+//execução continua 
+
+3- (nova) através de Rule
+@Rule 
+publilc ExpectedException exception = ExpectedException.none();
+
+antes da ação, adicionar a vereficação de exceção:
+
+exception.expect(Exception.class);
+//também é possívelverificar a mensagem retornada
+exception.expectMessage("mensagem esperada");
+
+//ação
+//execução para 
+ 
+caso a verificação seja feita após a ação (como normalmente se faz nos testes) o teste irá falhar pois o método não soube que estava esperando a exceção, ocasionando sua falha
+
+diferença entre a forma robusta e nova. a forma nova não deixa de lançar uma exceção, o método é apenas avisado que isso é esperado, portando, o que for posto após a chamada da ação não será executado, pois haverá uma interrupção na execução.
+
+a forma robusta, por usar a estrutura try/catch, permite a continuidade do código após a chamada da ação e das verificações.
+isso dá um controle extra ao método, o que nem sempre é necessário 
+
+logo:
+	> Forma elegante: funciona melhor quando o que importa é apenas a exceção -> garantia do motivo pelo qual a exceção é lançada
+
+	> para se tratar melhor a exceção, usa-se ou a forma robusta ou a elegante 
+
+	> há casos que apenas a forma robusta se mostra eficaz, pois ela é mais completa 
+
+==================================================== BEFORE E AFTER ==================================================== 
+
+==================================================== ORDEM DE EXECUÇÃO ==================================================== 
+
+==================================================== TDD ==================================================== 
+
+==================================================== @IGNORE E @ASSUMPTIONS ==================================================== 
+
+==================================================== TESTES PARAMETRIZÁVEIS ==================================================== 
+
+relembrando ... Ciclo TDD -> faz-se o teste e codifaca até que o teste passe. refatorando-o quando necessário
+
+teste parametrizável é aplicável quando se possui um mesmo cenário de teste onde se possui diferentes entradas (massa de dados)
+e a saída que será verificada 
+
+agrupa-se os testes em conjuntos 
+parameterizer -> vantagem: deixar o teste mais genérico
+
+cria-se uma classe para comportar este teste
+veja a massa de dados que deve variar entre os testes
+as variáveis devm ser globais
+
+Data Driven Test -> testes guiados por dados 
+
+deve-se declarar ao TestRunner que os testes da classe deverão ser tratados de forma diferente 
+acima na classe:
+@RunWith(Parameterized.class)
+
+(fonte de dados)a massa de testes deve estar organizada em um array, que por sua vez, pode pertencer a um array de cenário
+logo: {{var, var}, {var, var}, {var, var}}
+"um conjunto bem definido de interfaces e classes para representar e tratar grupos de dados como uma única unidade, que pode ser chamada coleção, ou collection"
+
+para informar ao junit a fonte de dados para o teste com a notação
+@Parameters 
+
+para linkar os parâmetos com o teste, vá à variável global e declare @Parameter 
+@Parameter() 
+var
+@Parameter(value=1) 
+var
+etc ...
+
+value1 corresponde o indice do elemento no array da massa de teste
+para cada linha de massa, um teste é executado 
+
+pode-se tornar a execução mais legível utilizando uma String
+alterar a anotação: @Parameters(name="Teste {index}")
++: **adicionar um novo parâmetro ao array, com a String de descrição
+
+veja que uma massa grnade de testes foi simplificada pela passagem de parâmetros 
+escreve0se o teste uma vez e o submete a quantos testes forem necessários com os dados necessários
+
+==================================================== MATCHERS PRÓPRIOS ==================================================== 
+
+podem ser criados pra melhorar a legibilidade, padronizar verificações, centralizar regras etc
+exemplo: exemplo: assertThat(response.getDataRetorno(), caiEm(Calendar.MONDAY));
+exemplo: assertThat(response.getDataRetorno(), caiNumaSegunda());
+
+matchers ficam em pacotes de teste separados
+a classe deve extender TypeSafeMatcher
+
+INFO: Running on PrimeFaces 6.1
+
 em um pacote para matchers...
 
 matchers proprios devem ser feitos em classes separadas, importando TypeSafeMatcher do Hamcrest , passando como <generic> o tipo de dado que será recebido pela classe
@@ -11,7 +292,7 @@ public static DiaSemanaMatcher caiem(Integer diaSemana) {
 em casos de erro, é possível formatar a descrição
 no método describeTo
 
-SUÍTE DE TESTES
+====================================================  SUÍTE DE TESTES ==================================================== 
 
 serve para executar todos os testes em apenas uma bateria 
 
@@ -32,7 +313,7 @@ desvantagem:
 classes novas deverão ser adicionadas a suite conforme o andamento do projeto
 as execuções ficarão duplicadas, exemplo de execução: teste1, teste2, teste3, SUITE[teste1, teste2, teste3], ...
 
-CRIAÇÃO DE DADOS P/ TESTE
+====================================================  CRIAÇÃO DE DADOS P/ TESTE ==================================================== 
 
 servem para facilitar a declaração de objetos necessários ao teste
 
@@ -50,7 +331,7 @@ a classe pode conter:
 - chain methods, que irão complementar alguma atributo do objeto, para se encaixar em um cenário específico. retornam this.
 *quando o cenário em que é necessário utilizar chain methods várias vezes, recomenda-se a criação de outro método static, para defirnir o objeto com caracteristicas distintas
 
-BUILDER MASTER 
+====================================================  BUILDER MASTER  ==================================================== 
 
 automatiza a criação dos builders 
 adicione a lib e dê build path
@@ -59,7 +340,7 @@ faça um método main chamando o builder master passando como parâmetro a classe q
 execute como java app e o código será gerado no console
 crie a classe, cole o código e se quiser, defina os valores padrões às variáveis
 
-ANÁLISE DE COBERTURA
+====================================================  ANÁLISE DE COBERTURA ==================================================== 
 
 métricas dos testes unitários: 
 - percentual de aceitação dos testes 
@@ -79,7 +360,7 @@ maior utilidade: verificar as linhas vermelhas
 
 deve-se preocupar em atingir 100% de aceitação
 
-DEPENDÊNCIAS EXTERNAS 
+====================================================  DEPENDÊNCIAS EXTERNAS ====================================================  
 
 testes unitários não acessam dependências externas (banco, arquivos, rede, etc)
 caso possuam, isso impactará nos princípios fundamentais dos testes unitários:
@@ -96,7 +377,7 @@ quando é necessário acessar serviços externos, utilizamos mocks
 a partir de agora trabalharemos com persistência de dados e DAO para a locação
 testes que trabalham com persistência de dados são testes de integração
 
-OBJETOS FALSOS
+====================================================  OBJETOS FALSOS ==================================================== 
 
 com o dao, os testes quebrarão
 para voltar a funcionar, deveriam instanciar o DAO 
@@ -110,7 +391,7 @@ criar uma classe DAO fake para injetar nos testes para que voltem a funcionar
 eficaz para isolar o teste do ambiente externo 
 desvantagem -> todo DAO irá precisar de uma classe fake
 
-MOCK
+====================================================  MOCK ====================================================  
 
 em vez de gerar objetos fake, gera objetos mock 
 com esses objetos, será possível definir comportamentos dinâmicos 
@@ -125,5 +406,9 @@ string: string vazia
 numeros: zero
 objeto: null
 
-MOCK2
-aa
+====================================================  GERANDO EXPECTATIVAS ==================================================== 
+
+devemos "ensinar" os objetos mock como se comportar/reagir a cada chamada para simular o exato comportamento da classe real 
+garante que quando o serviço real estiver pronto, a funcionalidade em si também funcionará corretamente 
+
+impartante: quando o mock não possuir alguma expectativa declarada, ele irá retornar o seu valor padrão

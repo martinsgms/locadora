@@ -38,11 +38,18 @@ public class CalculoValorLocacaoTest {
 	@Parameter(value=2)
 	public String cenario;
 	
+	private LocacaoDAO dao;
+	private SPCService spcService; 
+	
 	@Before
 	public void setup(){
+	    dao = mock(LocacaoDAO.class);
+	    spcService = mock(SPCService.class);
+	    
 		service = new LocacaoService();
-		LocacaoDAO dao = mock(LocacaoDAO.class);
+		
 		service.setLocacaoDAO(dao);
+		service.setSpcService(spcService);
 	}
 	
 	private static Filme filme1 = umFilme().build();
