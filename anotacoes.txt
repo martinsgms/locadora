@@ -58,3 +58,5 @@ adicione a lib e dê build path
 faça um método main chamando o builder master passando como parâmetro a classe que se deseja gerar o builder
 execute como java app e o código será gerado no console
 crie a classe, cole o código e se quiser, defina os valores padrões às variáveis
+
+asas
