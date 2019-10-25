@@ -430,3 +430,7 @@ mocks permitem a:
 
 verify -> verifica se um método foi chamado de acordo com os parâmetros passados 
 verify(objetoMock).metodo(parametrosDoMetodo)
+
+verifique apenas os comportamentos que forem importantes ao seu teste 
+
+ao verificar exceções, a forma robusta pode ser mais útil, pois ela não para a execução do método quando a exception é lançada. a forma nova para
