@@ -140,6 +140,8 @@ public class LocacaoServiceTest {
 	    when(spcService.possuiNegativacao(usuario)).thenReturn(true);
 	    
 	    service.alugarFilme(usuario, filmes);
+	    
+	    verify(spcService).possuiNegativacao(usuario);
     }
 	
 	@Test
