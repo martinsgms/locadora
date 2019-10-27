@@ -511,3 +511,10 @@ e a cada mock que quisermos criar, usaremos
 
 para iniciar os métodos mockados, declarar no before
 MockitoAnnotations.initMocks(this);
+
+====================================================  EXCEÇÕES COM MOCKS ==================================================== 
+
+podem ser verificadas com 
+when(spcService.possuiNegativacao(usuario)).thenThrow(new Exception("SPC fora de serviço"));
+
+atentar-se para o lançamento de exceções nas classes de serviço e as interfaces, para garantir que estas lançam as devidas exceptions 

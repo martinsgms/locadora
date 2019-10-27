@@ -16,10 +16,10 @@ import br.ce.wcaquino.utils.DataUtils;
 
 public class LocacaoService {
 	
-    LocacaoDAO dao;
-    SPCService spcService;
-    EmailService emailService;
-    
+    private LocacaoDAO dao;
+    private SPCService spcService;
+    private EmailService emailService;
+    private boolean isNegativado;
 
     public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws FilmeSemEstoqueException, LocadoraException {
 		if(usuario == null) {
@@ -36,7 +36,13 @@ public class LocacaoService {
 			}
 		}
 		
-		if (spcService.possuiNegativacao(usuario)) {
+		try {
+		    isNegativado = spcService.possuiNegativacao(usuario);
+        } catch (Exception e) {
+            throw new LocadoraException("SPC fora de serviço");
+        }
+		
+		if (isNegativado) {
             throw new LocadoraException("Usuário Negativado");
         }
 		
@@ -45,6 +51,7 @@ public class LocacaoService {
 		locacao.setUsuario(usuario);
 		locacao.setDataLocacao(new Date());
 		Double valorTotal = 0d;
+		
 		for(int i = 0; i < filmes.size(); i++) {
 			Filme filme = filmes.get(i);
 			Double valorFilme = filme.getPrecoLocacao();
@@ -56,6 +63,7 @@ public class LocacaoService {
 			}
 			valorTotal += valorFilme;
 		}
+		
 		locacao.setValor(valorTotal);
 		
 		//Entrega no dia seguinte

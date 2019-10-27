@@ -10,7 +10,7 @@ import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -30,11 +30,11 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import br.ce.wcaquino.builders.FilmeBuilder;
 import br.ce.wcaquino.builders.LocacaoBuilder;
-import br.ce.wcaquino.builders.UsuarioBuilder;
 import br.ce.wcaquino.dao.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -131,7 +131,7 @@ public class LocacaoServiceTest {
 	}
 	
 	@Test
-	public void naoDeveAlugarFilmeParaNegativado() throws LocadoraException, FilmeSemEstoqueException {
+	public void naoDeveAlugarFilmeParaNegativado() throws Exception {
 	    
 	    
 	    exception.expect(LocadoraException.class);
@@ -170,8 +170,32 @@ public class LocacaoServiceTest {
 	
 	@Test
     public void devePercorrerListaNotificandoApenasUsuariosAtrasados() throws Exception {
-        Usuario usuario2 = UsuarioBuilder.umUsuario().build();
+        
+        List<Locacao> locacoes = Arrays.asList(
+                LocacaoBuilder.umaLocacao().comUsuario(usuario).atrasada().build(),
+                LocacaoBuilder.umaLocacao().comUsuario(usuario).atrasada().build(),
+                LocacaoBuilder.umaLocacao().comUsuario(usuario).build(),
+                LocacaoBuilder.umaLocacao().comUsuario(usuario).atrasada().build()
+                );
+        
+        when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
+        
+        service.notificarAtrasos();
+        
+        verify(emailService, atLeast(3)).notificarAtraso(Mockito.any(Usuario.class));
+        
     }
+	
+	@Test
+	public void deveTratarErroSpc() throws Exception {
+	    
+	    exception.expect(LocadoraException.class);
+	    exception.expectMessage("SPC fora de serviço");
+	    
+	    when(spcService.possuiNegativacao(usuario)).thenThrow(new Exception("SPC fora de serviço"));
+	    service.alugarFilme(usuario, filmes);
+    }
+	
 	
 //	public static void main(String[] args) {
 //        new BuilderMaster().gerarCodigoClasse(Locacao.class);

@@ -1,5 +1,6 @@
 package br.ce.wcaquino.servicos;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -74,7 +75,7 @@ public class CalculadoraTest {
 	    Calculadora calcMock = mock(Calculadora.class);
 	    
 	    when(calcMock.somar(eq(1), anyInt())).thenReturn(10);
-	    System.out.println(calcMock.somar(1, 5));
+	    assertEquals(10, calcMock.somar(1, 5));
 
     }
 }
