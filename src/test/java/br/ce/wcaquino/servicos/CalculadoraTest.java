@@ -105,12 +105,11 @@ public class CalculadoraTest {
 	    doReturn(100).when(calcSpy).somar(1, 2);
 	    doNothing().when(calcSpy).imprime();
 	    
-	    System.out.println(calcMock.somar(2, 2));
-	    System.out.println(calcSpy.somar(1, 2));
+//	    System.out.println(calcMock.somar(2, 2));
+//	    System.out.println(calcSpy.somar(1, 2));
 	    
 	    calcMock.imprime();
 	    calcSpy.imprime();
-	    
 	}
 	
 }

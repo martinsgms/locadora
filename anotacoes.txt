@@ -564,3 +564,37 @@ doReturn(100).when(calcSpy).somar(1, 2);
 
 a expectativa foi gravada sem que o método fosse executado 
 
+==================================================== POWER MOCK ==================================================== 
+
+Mockito não consegue:
+- mockar construtor de objeto, 
+- alterar comportamento de método static ou privados 
+
+o power mock exende funcionalidades de outros frameworks de mocks 
+
+    <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-api-mockito</artifactId>
+        <version>1.6.6</version>
+    </dependency>
+    <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-module-junit4</artifactId>
+        <version>1.6.6</version>
+    </dependency>
+
+==================================================== MOCKANDO CONSTRUTORES ==================================================== 
+
+um problema que tinhamos era que alguns testes só poderiam ser executados em dias específicos 
+com o power mock, pode-se definir valores a construtores, por exemplo, da classe Date
+PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DataUtils.obterData(26, 10, 2019));
+
+A classe deverá possuir a seguinte anotação
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({LocacaoService.class, DataUtils.class})
+
+atentar-se para as classes externas que chamam os contrutores mockados, pois eles funcionarão da maneira padrão caso não se especifique que
+o power mock deve agir sobre eles
+aqui por exemplo, informa-se que as duas classes suportarão mock para chamadas de construtores 
+@PrepareForTest({LocacaoService.class, DataUtils.class})
+ 
