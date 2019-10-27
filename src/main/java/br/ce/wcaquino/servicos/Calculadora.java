@@ -5,7 +5,7 @@ import br.ce.wcaquino.exceptions.NaoPodeDividirPorZeroException;
 public class Calculadora {
 
 	public int somar(int a, int b) {
-		return a + b;
+	    return a + b;
 	}
 
 	public int subtrair(int a, int b) {
@@ -17,6 +17,10 @@ public class Calculadora {
 			throw new NaoPodeDividirPorZeroException();
 		}
 		return a / b;
+	}
+	
+	public void imprime() {
+	    System.out.println("passei no imprime");
 	}
 
 }

@@ -544,3 +544,23 @@ argC.getAllValues()
 obs: relembrando ... errorColector.checkThat() funciona da mesma forma que o assertThat()
 com a diferença que pega mais de um erro de uma vez rodando com junit
 
+====================================================  SPY ==================================================== 
+
+Spy e Mock são iguais no seguinte ponto:
+ambos suportam a gravação de uma expectativa com when()
+
+porém, quando passa-se um parâmetro não esperado...
+
+- o Mock retorna seu valor padrão (cada tipo de variável possui um pré definido)
+- o Spy retorna a execução real do método 
+
+Por isso, spy não irá funcionar com interfaces, somente com classes concretas. mocks funcionam 
+
+durante a gravação da expectativa o spy executa a o método, logo, estará sujeito a erros internos, como exceções, que interrompam o teste antes mesmo das verificações
+para evitar isso, usa-se outra forma de gravar uma expectativa com spy, separando a instância da execução do método
+
+considerando que ao passar 1 uma exceção seria lançada
+doReturn(100).when(calcSpy).somar(1, 2);
+
+a expectativa foi gravada sem que o método fosse executado 
+

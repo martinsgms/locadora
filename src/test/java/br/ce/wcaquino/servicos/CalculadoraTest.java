@@ -1,8 +1,8 @@
 package br.ce.wcaquino.servicos;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -10,17 +10,26 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 
 import br.ce.wcaquino.exceptions.NaoPodeDividirPorZeroException;
 
 public class CalculadoraTest {
 	
-    
 	private Calculadora calc;
+	
+	@Mock
+	private Calculadora calcMock;
+	@Spy
+	private Calculadora calcSpy;
+	
 	
 	@Before
 	public void setup(){
 		calc = new Calculadora();
+		MockitoAnnotations.initMocks(this);
 	}
 
 	@Test
@@ -87,4 +96,21 @@ public class CalculadoraTest {
 	    assertEquals(10, calcMock.somar(1, 5));
 //	    System.out.println(argC.getAllValues());
     }
+	
+	@Test
+	public void deveTestarMockAndSpy() {
+	    when(calcMock.somar(2, 1)).thenReturn(10);
+	    
+//	    when(calcSpy.somar(1, 1)).thenReturn(20);
+	    doReturn(100).when(calcSpy).somar(1, 2);
+	    doNothing().when(calcSpy).imprime();
+	    
+	    System.out.println(calcMock.somar(2, 2));
+	    System.out.println(calcSpy.somar(1, 2));
+	    
+	    calcMock.imprime();
+	    calcSpy.imprime();
+	    
+	}
+	
 }
