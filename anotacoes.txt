@@ -597,4 +597,23 @@ atentar-se para as classes externas que chamam os contrutores mockados, pois ele
 o power mock deve agir sobre eles
 aqui por exemplo, informa-se que as duas classes suportarão mock para chamadas de construtores 
 @PrepareForTest({LocacaoService.class, DataUtils.class})
- 
+
+caso seja necessário verificar se o método construtor foi chamado 
+PowerMockito.verifyNew(Date.class, Mockito.times(n)).withNoArguments();
+
+==================================================== MOCKANDO MÉTODOS ESTÁTICOS ==================================================== 
+
+pode ser que seja necessário mockar métodos static. o power mock disponibiliza esta funcionalidade
+como exemplo, a classe Calendar
+
+	    Calendar calendar = Calendar.getInstance();
+	    calendar.set(Calendar.DAY_OF_MONTH, 26);
+	    calendar.set(Calendar.MONTH, Calendar.OCTOBER);
+	    calendar.set(Calendar.YEAR, 2019);
+
+	    PowerMockito.mockStatic(Calendar.class);
+	    PowerMockito.when(Calendar.getInstance()).thenReturn(calendar);
+
+caso seja necessário verificar se o método static foi chamado 
+PowerMockito.verifyStatic(Mockito.times(n));
+Calendar.getInstance();
