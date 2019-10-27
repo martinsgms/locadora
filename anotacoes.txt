@@ -433,4 +433,55 @@ verify(objetoMock).metodo(parametrosDoMetodo)
 
 verifique apenas os comportamentos que forem importantes ao seu teste 
 
-ao verificar exceções, a forma robusta pode ser mais útil, pois ela não para a execução do método quando a exception é lançada. a forma nova para
+ao verificar exceções, a forma robusta pode ser mais útil, pois ela não para a execução do método quando a exception é lançada. a forma nova para a execução assim que a exceção é lançada
+
+====================================================  VERIFICANDO COMPORTAMENTOS 2 ==================================================== 
+
+nova funcionalidade: enviar email apenas para usuários atrasados 
+e usuários em dia não devem receber email
+
+para verificar se um método não foi chamado, dada circunstâncias em que sua chamada não deva ocorrer:
+no caso, o usuário possui a data de retorno em dia, então o serviço não deve notifica-lo com email
+verify(emailService, never()).notificarAtraso(usuario);
+
+para garantir que não houve nenhuma interação a mais além da solicitada, coloque o comando 
+verifyNoMoreInteractions(emailService);
+
+e para verificar que não houve interação com um mock
+verifyZeroInteractions(spc);
+
+lembre-se de verifica apenas mocks que façam parte do escopo do teste, portanto, neste cenário, verificações para o spc não seria necessário
+pois no método de enviar email, não há interações com o spc
+
+
+em uma lista de usuários em que exista mais de uma locação atrasada para um mesmo usuário, seria necessário um verify para cada ocorrência
+para deixar esta verificação mais genérica, usa-se
+
+para informar a quantidade de vezes exata
+verify(emailService, times(2)).notificarAtraso(usuario);
+
+pelo menos n-vezes
+verify(emailService, atLeast(n)).notificarAtraso(usuario);
+
+no máximo n-vezes
+verify(emailService, atMost()).notificarAtraso(usuario);
+
+no mínimo uma vez
+verify(emailService, atLeastOnce()).notificarAtraso(usuario);
+
+uma maneira de deixar verificações de mocks mais genércas é usando o matcher any()
+não importa qual instância de usuário seja chamada. só pelo fato de existir uma chamada para qualquer instância da classe informada, a verificação passa
+verify(emailService, never()).notificarAtraso(any(Usuario.class));
+
+para cada tipo de variável existe um any() 
+deste modo, a preocupação não fica no exato parâmetro a ser passado 
+
+o teste fica menos seguro, mas mais flexivel
+cabe ao desenvolvedor decidir se as verificações devem ser minuciosas e precisas ou mais genéricas 
+
+em um método que possua mais de um parâmetro, ao usar o matcher any() para um, todos os outros parâmetros irão pedir matcher 
+when(calcMock.somar(anyInt(), anyInt())).thenReturn(10);
+
+pode ser any() também, ou para especificar um valor, use eq(value)
+when(calcMock.somar(eq(1), anyInt())).thenReturn(10);
+

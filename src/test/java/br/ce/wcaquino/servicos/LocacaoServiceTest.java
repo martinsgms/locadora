@@ -1,7 +1,5 @@
 package br.ce.wcaquino.servicos;
 
-
-
 import static br.ce.wcaquino.builders.FilmeBuilder.umFilme;
 import static br.ce.wcaquino.builders.UsuarioBuilder.umUsuario;
 import static br.ce.wcaquino.matchers.MatchersProprios.caiNumaSegunda;
@@ -11,9 +9,11 @@ import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -28,8 +28,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
+import br.ce.wcaquino.builders.FilmeBuilder;
 import br.ce.wcaquino.builders.LocacaoBuilder;
+import br.ce.wcaquino.builders.UsuarioBuilder;
 import br.ce.wcaquino.dao.LocacaoDAO;
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
@@ -51,6 +54,7 @@ public class LocacaoServiceTest {
 	private LocacaoService service;
 	private Usuario usuario;
 	private EmailService emailService;
+	public List<Filme> filmes;
 	
 	@Before
 	public void setup(){
@@ -64,13 +68,13 @@ public class LocacaoServiceTest {
 		service.setSpcService(spcService);
 		service.setLocacaoDAO(dao);
 		service.setEmailService(emailService);
+		
+		filmes = Arrays.asList(umFilme().build());
 	}
 	
 	@Test
 	public void deveAlugarFilme() throws Exception {
 		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-		
-		List<Filme> filmes = Arrays.asList(umFilme().build());
 		
 		//acao
 		Locacao locacao = service.alugarFilme(usuario, filmes);
@@ -87,16 +91,14 @@ public class LocacaoServiceTest {
 	
 	@Test(expected = FilmeSemEstoqueException.class)
 	public void naoDeveAlugarFilmeSemEstoque() throws Exception{
-		List<Filme> filmes = Arrays.asList(umFilme().semEstoque().build());
-		
+		List<Filme> filmes = Arrays.asList(FilmeBuilder.umFilme().semEstoque().build());
 		service.alugarFilme(usuario, filmes);
 	}
 	
 	@Test
 	public void naoDeveAlugarFilmeSemUsuario() throws FilmeSemEstoqueException{
-		List<Filme> filmes = Arrays.asList(umFilme().build());
 
-		try {
+	    try {
 			service.alugarFilme(null, filmes);
 			Assert.fail();
 		} catch (LocadoraException e) {
@@ -117,7 +119,6 @@ public class LocacaoServiceTest {
 	public void deveDevolverNaSegundaAoAlugarNoSabado() throws FilmeSemEstoqueException, LocadoraException{
 		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 		
-		List<Filme> filmes = Arrays.asList(umFilme().build());
 		
 		Locacao retorno = service.alugarFilme(usuario, filmes);
 		
@@ -132,7 +133,7 @@ public class LocacaoServiceTest {
 	
 	@Test
 	public void naoDeveAlugarFilmeParaNegativado() throws LocadoraException, FilmeSemEstoqueException {
-	    List<Filme> filmes = Arrays.asList(umFilme().build());
+	    
 	    
 	    exception.expect(LocadoraException.class);
 	    exception.expectMessage("Usuário Negativado");
@@ -153,6 +154,24 @@ public class LocacaoServiceTest {
 	    service.notificarAtrasos();
 	    
 	    verify(emailService).notificarAtraso(usuario);
+	    verifyNoMoreInteractions(emailService);
+    }
+	
+	@Test
+	public void naoDeveEnviarEmailParaLocacoesEmDia() {
+        List<Locacao> locacoes = Arrays.asList(LocacaoBuilder.umaLocacao().build());
+        
+        when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
+        
+        service.notificarAtrasos();
+        
+        verify(emailService, never()).notificarAtraso(usuario);
+        verifyNoMoreInteractions(emailService);
+	}
+	
+	@Test
+    public void devePercorrerListaNotificandoApenasUsuariosAtrasados() throws Exception {
+        Usuario usuario2 = UsuarioBuilder.umUsuario().build();
     }
 	
 //	public static void main(String[] args) {
