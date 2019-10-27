@@ -518,3 +518,29 @@ podem ser verificadas com
 when(spcService.possuiNegativacao(usuario)).thenThrow(new Exception("SPC fora de serviço"));
 
 atentar-se para o lançamento de exceções nas classes de serviço e as interfaces, para garantir que estas lançam as devidas exceptions 
+
+====================================================  CAPTURANDO ARGUMENTOS ==================================================== 
+
+possibilita que mesmo em métodos void possa-se capturar a variável atualizada dentro deste método
+desde que nesse método exista uma chamada para outro método com as variáveis alteradas
+captura-se este argumento e torna-se possível fazer assertivas até este ponto, mesmo que o método não retorne esta variável 
+- usa-se na fase de verify() 
+
+ ArgumentCaptor<Locacao> argC = ArgumentCaptor.forClass(Locacao.class);
+	    verify(dao).salvar(argC.capture());
+
+obs: o método salvar carrega a nova locação com todos os valores que desejamos testar	    
+então, já que capturamos o argumento, basta coloca-lo numa variável e realizar as assertivas como um objeto normal
+exemplo: errorColector.checkThat(novaLocacao.getFilmes(), is(locacao.getFilmes()));
+
+	    Locacao novaLocacao = argC.getValue();
+
+- ou na fase de when
+when(calcMock.somar(argC.capture(), argC.capture())).thenReturn(10);
+
+para retornar um array com todos os args, caso exista mais de um 
+argC.getAllValues()
+
+obs: relembrando ... errorColector.checkThat() funciona da mesma forma que o assertThat()
+com a diferença que pega mais de um erro de uma vez rodando com junit
+

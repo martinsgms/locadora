@@ -16,6 +16,10 @@ public class MatchersProprios {
         return new DiferencaDiasMatcher(0);
     }
     
+    public static DiferencaDiasMatcher ehDaquiNDias(Integer dias) {
+        return new DiferencaDiasMatcher(dias);
+    }
+    
     public static DiferencaDiasMatcher ehAmanha() {
         return new DiferencaDiasMatcher(1);
     }

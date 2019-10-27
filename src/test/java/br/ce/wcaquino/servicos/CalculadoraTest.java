@@ -9,11 +9,13 @@ import static org.mockito.Mockito.when;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import br.ce.wcaquino.exceptions.NaoPodeDividirPorZeroException;
 
 public class CalculadoraTest {
 	
+    
 	private Calculadora calc;
 	
 	@Before
@@ -74,8 +76,15 @@ public class CalculadoraTest {
 	public void testMatcherMock() {
 	    Calculadora calcMock = mock(Calculadora.class);
 	    
-	    when(calcMock.somar(eq(1), anyInt())).thenReturn(10);
+	    ArgumentCaptor<Integer> argC = ArgumentCaptor.forClass(Integer.class);
+	    
+//	    utilizando matcher any
+//	    when(calcMock.somar(eq(1), anyInt())).thenReturn(10);
+	    
+//	    capturando os argumentos passados 
+	    when(calcMock.somar(argC.capture(), argC.capture())).thenReturn(10);
+	    
 	    assertEquals(10, calcMock.somar(1, 5));
-
+//	    System.out.println(argC.getAllValues());
     }
 }

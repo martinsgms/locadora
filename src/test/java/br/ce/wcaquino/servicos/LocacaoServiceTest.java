@@ -9,6 +9,7 @@ import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.never;
@@ -28,6 +29,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -41,12 +43,13 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.exceptions.LocadoraException;
+import br.ce.wcaquino.matchers.MatchersProprios;
 import br.ce.wcaquino.utils.DataUtils;
 
 public class LocacaoServiceTest {
 
 	@Rule
-	public ErrorCollector error = new ErrorCollector();
+	public ErrorCollector errorColector = new ErrorCollector();
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 	
@@ -79,12 +82,12 @@ public class LocacaoServiceTest {
 		Locacao locacao = service.alugarFilme(usuario, filmes);
 		
 		//verificacao
-		error.checkThat(locacao.getValor(), is(equalTo(4.0)));
+		errorColector.checkThat(locacao.getValor(), is(equalTo(4.0)));
 		
-		error.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
-		error.checkThat(locacao.getDataLocacao(), ehHoje());
+		errorColector.checkThat(isMesmaData(locacao.getDataLocacao(), new Date()), is(true));
+		errorColector.checkThat(locacao.getDataLocacao(), ehHoje());
 		
-		error.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
+		errorColector.checkThat(isMesmaData(locacao.getDataRetorno(), obterDataComDiferencaDias(1)), is(true));
 		assertThat(locacao.getDataRetorno(), ehAmanha());
 	}
 	
@@ -194,6 +197,24 @@ public class LocacaoServiceTest {
 	    
 	    when(spcService.possuiNegativacao(usuario)).thenThrow(new Exception("SPC fora de serviço"));
 	    service.alugarFilme(usuario, filmes);
+    }
+	
+	@Test
+	public void deveProrrogarUmaLocacao() {
+	    Locacao locacao = LocacaoBuilder.umaLocacao().build();
+	    
+	    service.prorrogarLocacao(locacao, 3);
+	    
+	    ArgumentCaptor<Locacao> argC = ArgumentCaptor.forClass(Locacao.class);
+	    verify(dao).salvar(argC.capture());
+	    
+	    Locacao novaLocacao = argC.getValue();
+	    
+	    errorColector.checkThat(novaLocacao.getDataRetorno(), MatchersProprios.ehDaquiNDias(3));
+	    errorColector.checkThat(novaLocacao.getUsuario().getNome(), is("gabriel"));
+	    errorColector.checkThat(novaLocacao.getFilmes(), is(locacao.getFilmes()));
+	    errorColector.checkThat(novaLocacao.getValor(), is(12.00));
+	    errorColector.checkThat(novaLocacao.getDataLocacao(), ehHoje());
     }
 	
 	
