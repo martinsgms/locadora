@@ -485,3 +485,29 @@ when(calcMock.somar(anyInt(), anyInt())).thenReturn(10);
 pode ser any() também, ou para especificar um valor, use eq(value)
 when(calcMock.somar(eq(1), anyInt())).thenReturn(10);
 
+====================================================  ANOTAÇÕES ==================================================== 
+
+A partir de agora, não será mais necessário declarar mocks via variável global + método mock(Class.class)
+private EmailService emailService;
+...
+emailService = mock(EmailService.class);
+
+além de fazer um método set na classe de serviço para cada novo serviço externo criado 
+public void setEmailService(EmailService emailService) {
+    this.emailService = emailService;
+}
+
+e injetar o mock manualmente a partir deste método set 
+private LocacaoService service;
+service.setEmailService(emailService);
+
+Agora, informaremos a classe que injetaremos mock com a anotação
+@InjectMocks
+private LocacaoService service;
+obs: a criação de instância para esta classe não é mais necessária. deve-se usar esta variável mesmo
+
+e a cada mock que quisermos criar, usaremos 
+@Mock
+
+para iniciar os métodos mockados, declarar no before
+MockitoAnnotations.initMocks(this);

@@ -9,7 +9,7 @@ import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -28,7 +28,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import br.ce.wcaquino.builders.FilmeBuilder;
 import br.ce.wcaquino.builders.LocacaoBuilder;
@@ -48,27 +50,24 @@ public class LocacaoServiceTest {
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
 	
-	private LocacaoDAO dao;
-	private SPCService spcService;
-	
+	@InjectMocks
 	private LocacaoService service;
-	private Usuario usuario;
+	
+	@Mock
+	private SPCService spcService;
+	@Mock
+	private LocacaoDAO dao;
+	@Mock
 	private EmailService emailService;
+
+	private Usuario usuario;
 	public List<Filme> filmes;
 	
 	@Before
 	public void setup(){
-	    dao = mock(LocacaoDAO.class);
-	    spcService = mock(SPCService.class);
-	    emailService = mock(EmailService.class);
+		MockitoAnnotations.initMocks(this);
 	    
-		service = new LocacaoService();
 		usuario = umUsuario().build();
-		
-		service.setSpcService(spcService);
-		service.setLocacaoDAO(dao);
-		service.setEmailService(emailService);
-		
 		filmes = Arrays.asList(umFilme().build());
 	}
 	
