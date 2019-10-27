@@ -9,7 +9,7 @@ import static br.ce.wcaquino.utils.DataUtils.isMesmaData;
 import static br.ce.wcaquino.utils.DataUtils.obterDataComDiferencaDias;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -226,6 +226,18 @@ public class LocacaoServiceTest {
 	    errorColector.checkThat(novaLocacao.getFilmes(), is(locacao.getFilmes()));
 	    errorColector.checkThat(novaLocacao.getValor(), is(12.00));
 	    errorColector.checkThat(novaLocacao.getDataLocacao(), ehHoje());
+    }
+	
+	@Test
+    public void deveAlugarFilmeSemCalcularValor() throws Exception {
+        
+	    service = PowerMockito.spy(service);
+	    PowerMockito.doReturn(1.00).when(service, "calcularValorLocacao", filmes);
+	    
+	    Locacao locacao = service.alugarFilme(usuario, filmes);
+	    
+	    assertThat(locacao.getValor(), is(1.00));
+	    PowerMockito.verifyPrivate(service).invoke("calcularValorLocacao", filmes);
     }
 	
 	

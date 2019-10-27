@@ -617,3 +617,14 @@ como exemplo, a classe Calendar
 caso seja necessário verificar se o método static foi chamado 
 PowerMockito.verifyStatic(Mockito.times(n));
 Calendar.getInstance();
+
+==================================================== MOCKANDO MÉTODOS PRIVADOS ====================================================
+
+métodos private podem ser mockados através de um spy do power mock
+perceba que não se chama o método normalmente. define-se uma string com o nome do método e seus parâmetros vem em seguida
+a expectativa é definida antes da instância 
+	    service = PowerMockito.spy(service);
+	    PowerMockito.doReturn(1.00).when(service, "calcularValorLocacao", filmes);
+
+caso seja necessário verificar se o método private foi chamado 
+	    PowerMockito.verifyPrivate(service).invoke("calcularValorLocacao", filmes);
