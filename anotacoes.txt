@@ -684,3 +684,27 @@ testes unitários, por serem isolados, dificilmente poderão apresentar erro sendo
 - além disso, cada runner (padrão, parameterizer, pw ...) deverá possuir uma classe configurada para ser possível o paralelismo ddentro dela 
 - quanto mais threads, mais esforço o processador fará para gerenciar as trocas, então não aumente-as muito 
 - o tempo de execução não muda tanto 
+
+==================================================== PARALELISMO 2 ====================================================
+
+a partir do apache maven e do plugin surefire, é possivel definir o paralelismo dos testes de uma maneira mais simples
+não importa qual runner a classe use, todos serão executados apenas com uma configuração no pom.xml
+
+  <build>
+    <testSourceDirectory>src/test/java/</testSourceDirectory>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.18.1</version>
+            <configuration>
+                <includes>
+                    <include>br/ce/wcaquino/**/*.java</include>
+                </includes>
+                <!-- <threadCount>5</threadCount> -->
+                <useUnlimitedThreads>true</useUnlimitedThreads>
+                <parallel>all</parallel>
+            </configuration>
+        </plugin>
+    </plugins>
+  </build>
