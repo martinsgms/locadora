@@ -37,6 +37,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import br.ce.wcaquino.builders.FilmeBuilder;
 import br.ce.wcaquino.builders.LocacaoBuilder;
@@ -240,7 +241,14 @@ public class LocacaoServiceTest {
 	    PowerMockito.verifyPrivate(service).invoke("calcularValorLocacao", filmes);
     }
 	
-	
+	@Test
+    public void deveCalcularValorLocacao() throws Exception {
+        service = PowerMockito.spy(service);
+        
+        Double valor = (Double) Whitebox.invokeMethod(service, "calcularValorLocacao", filmes);
+        
+        assertThat(valor, is(4.00));
+    }
 //	public static void main(String[] args) {
 //        new BuilderMaster().gerarCodigoClasse(Locacao.class);
 //    }

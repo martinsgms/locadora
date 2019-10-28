@@ -628,3 +628,11 @@ a expectativa é definida antes da instância
 
 caso seja necessário verificar se o método private foi chamado 
 	    PowerMockito.verifyPrivate(service).invoke("calcularValorLocacao", filmes);
+
+==================================================== TESTANDO MÉTODOS PRIVADOS ====================================================
+
+para testar os métodos privados em si, use
+      service = PowerMockito.spy(service); 
+      Double valor = (Double) Whitebox.invokeMethod(service, "calcularValorLocacao", filmes);
+
+depois, siga com as verificações normalmente 
