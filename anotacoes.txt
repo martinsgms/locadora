@@ -645,7 +645,7 @@ depois, siga com as verificações normalmente
 é necessário testá-los. pode-se também alterar a visibilidade p/ protected p/ torná-los acessíveis 
 - um código bem escrito dispensa o power mock 
 
-==================================================== REFATORANDO CÓDIGO P/ DISPENSAR POWER MOCK====================================================
+==================================================== REFATORANDO CÓDIGO P/ DISPENSAR POWER MOCK ====================================================
 
 como dito, um código bem escrito pode dispensar o power mock
 as mesmas funcionalidades podem ser feitas com o mockito apenas
@@ -673,3 +673,14 @@ recomendação: utilizar power mock apenas em último caso, geralmente em projetos 
 dá pra refatorar facilmente?
 sim: mockito + refatoração
 não: power mock + consequências 
+
+
+==================================================== PARALELISMO 1 ====================================================
+
+objetivo: otimizar o tempo de execução da bateria de testes
+testes unitários, por serem isolados, dificilmente poderão apresentar erro sendo executados em paralelo
+
+- somente dentro de uma classe, então, duas classes não rodarão testes em paralelo
+- além disso, cada runner (padrão, parameterizer, pw ...) deverá possuir uma classe configurada para ser possível o paralelismo ddentro dela 
+- quanto mais threads, mais esforço o processador fará para gerenciar as trocas, então não aumente-as muito 
+- o tempo de execução não muda tanto 
