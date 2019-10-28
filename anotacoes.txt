@@ -636,3 +636,40 @@ para testar os métodos privados em si, use
       Double valor = (Double) Whitebox.invokeMethod(service, "calcularValorLocacao", filmes);
 
 depois, siga com as verificações normalmente 
+
+==================================================== POWER MOCK: DESVANTAGENS ====================================================
+
+- a classe de testes ficará mais pesada
+- a análise de cobertura ficará bugada 
+- métodos privados podem ser acessados através dos públicos, pois são detalhes de implementação p/ reuso de código. verifique se realmente
+é necessário testá-los. pode-se também alterar a visibilidade p/ protected p/ torná-los acessíveis 
+- um código bem escrito dispensa o power mock 
+
+==================================================== REFATORANDO CÓDIGO P/ DISPENSAR POWER MOCK====================================================
+
+como dito, um código bem escrito pode dispensar o power mock
+as mesmas funcionalidades podem ser feitas com o mockito apenas
+
+para alterar construtores, na classe de serviço pode-se criar um método que retorne o método que se deseja alterar o construtor 
+e no teste, urilizar o doReturn().when(class).metodo() p/ definir como ele deve se comportar 
+doReturn(DataUtils.obterData(28, 10, 2019)).when(service).obterData();
+
+service.obterData() corresponde a 
+   protected Date obterData() {
+        return new Date();
+    }
+
+métodos privados não poderão ser mockados
+
+porém, há uma maneira de testá-los internamente
+	Class<LocacaoService> clazz = LocacaoService.class;
+	Method method = clazz.getDeclaredMethod("calcularValorLocacao", List.class);
+	method.setAccessible(true);
+        
+        Double valor = (Double) method.invoke(service, filmes);
+
+recomendação: utilizar power mock apenas em último caso, geralmente em projetos legado onde a refatoração é difícil 
+
+dá pra refatorar facilmente?
+sim: mockito + refatoração
+não: power mock + consequências 
