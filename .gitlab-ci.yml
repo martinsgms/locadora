@@ -4,5 +4,5 @@ stages:
   - build
 
 build:
-  - stage: build
-  - script: mvn clean package
+  stage: build
+  script: mvn clean install
