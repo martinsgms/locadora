@@ -2,8 +2,8 @@ image: java:latest
 image: maven:latest
 
 stages:
-  - test-and-build
+  - build
 
-test-and-build:
-  - stage: test-and-build
+build:
+  - stage: build
   - script: mvn clean package
