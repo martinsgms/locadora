@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: br.ce.wcaquino.servicos.LocacaoServiceTest
 -------------------------------------------------------------------------------
-Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.05 sec - in br.ce.wcaquino.servicos.LocacaoServiceTest
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.147 sec - in br.ce.wcaquino.servicos.LocacaoServiceTest

@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: br.ce.wcaquino.servicos.CalculadoraTest
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.383 sec - in br.ce.wcaquino.servicos.CalculadoraTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.286 sec - in br.ce.wcaquino.servicos.CalculadoraTest
