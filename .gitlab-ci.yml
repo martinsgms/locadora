@@ -1,4 +1,3 @@
-image: java:latest
 image: maven:latest
 
 stages:
